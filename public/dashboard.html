@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Mentorship Platform</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <a href="dashboard.html" class="logo">MentorMatch</a>
+            <ul id="main-nav">
+                <li><a href="#" id="nav-profile">My Profile</a></li>
+                <li><a href="#" id="nav-discovery">Discover</a></li>
+                <li><a href="#" id="nav-connections">Connections</a></li>
+                <li><a href="#" id="logout-button">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        <div id="user-greeting" class="mb-2"></div>
+        <div id="message-area" style="display: none;"></div>
+
+        <section id="profile-section" class="dashboard-section" style="display: none;">
+            <h2>My Profile <button id="edit-profile-btn" class="btn btn-secondary btn-sm" style="float: right;">Edit</button></h2>
+            <div id="profile-view">
+                <p><strong>Name:</strong> <span id="profile-name"></span></p>
+                <p><strong>Email:</strong> <span id="profile-email"></span></p>
+                <p><strong>Role:</strong> <span id="profile-role" style="text-transform: capitalize;"></span></p>
+                <p><strong>Bio:</strong></p>
+                <p id="profile-bio" style="white-space: pre-wrap;"></p>
+                <div class="mt-1">
+                    <strong>Skills:</strong>
+                    <div id="profile-skills" class="tags"></div>
+                </div>
+                <div class="mt-1">
+                    <strong>Interests:</strong>
+                    <div id="profile-interests" class="tags"></div>
+                </div>
+                <button id="delete-profile-btn" class="btn btn-danger mt-2">Delete My Profile</button>
+            </div>
+            <div id="profile-edit" style="display: none;">
+                <form id="edit-profile-form">
+                    <div class="form-group">
+                        <label for="edit-name">Name</label>
+                        <input type="text" id="edit-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-role">Role</label>
+                        <select id="edit-role" required>
+                            <option value="mentor">Mentor</option>
+                            <option value="mentee">Mentee</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-bio">Bio</label>
+                        <textarea id="edit-bio" maxlength="500"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-skills-input">Skills (press Enter or comma to add)</label>
+                        <div id="edit-skills-container" class="tag-input-container">
+                            <input type="text" id="edit-skills-input" placeholder="Add a skill...">
+                        </div>
+                        <input type="hidden" id="edit-skills">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-interests-input">Interests (press Enter or comma to add)</label>
+                        <div id="edit-interests-container" class="tag-input-container">
+                            <input type="text" id="edit-interests-input" placeholder="Add an interest...">
+                        </div>
+                        <input type="hidden" id="edit-interests">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <button type="button" id="cancel-edit-profile-btn" class="btn btn-secondary">Cancel</button>
+                </form>
+            </div>
+        </section>
+
+        <section id="discovery-section" class="dashboard-section" style="display: none;">
+            <h2>Discover Users</h2>
+            <form id="discovery-filter-form" class="mb-2" style="display: flex; flex-wrap: wrap; gap: 10px;">
+                <select id="filter-role">
+                    <option value="">Any Role</option>
+                    <option value="mentor">Mentors</option>
+                    <option value="mentee">Mentees</option>
+                </select>
+                <input type="text" id="filter-skill" placeholder="Filter by skill...">
+                <input type="text" id="filter-interest" placeholder="Filter by interest...">
+                <input type="text" id="filter-search" placeholder="Search name/bio...">
+                <button type="submit" class="btn btn-primary btn-sm">Filter</button>
+                <button type="reset" id="reset-filter-btn" class="btn btn-secondary btn-sm">Reset</button>
+            </form>
+            <div id="discovery-results" class="profile-card-list">
+                <p>Loading users...</p>
+            </div>
+        </section>
+
+        <section id="connections-section" class="dashboard-section">
+            <h2>My Connections</h2>
+
+            <div id="pending-received-requests">
+                <h3>Pending Requests Received</h3>
+                <ul id="pending-received-list" class="connection-list">
+                    <li>No pending requests received.</li>
+                </ul>
+            </div>
+
+            <div id="accepted-connections" class="mt-2">
+                <h3>Accepted Connections</h3>
+                <ul id="accepted-list" class="connection-list">
+                    <li>No active connections.</li>
+                </ul>
+            </div>
+
+            <div id="pending-sent-requests" class="mt-2">
+                <h3>Pending Requests Sent</h3>
+                <ul id="pending-sent-list" class="connection-list">
+                    <li>No pending requests sent.</li>
+                </ul>
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 MentorMatch Platform</p>
+        </div>
+    </footer>
+
+    <template id="profile-card-template">
+        <div class="profile-card">
+            <h3></h3>
+            <p class="role"></p>
+            <p class="bio"></p>
+            <div class="tags skills"><strong>Skills:</strong> </div>
+            <div class="tags interests"><strong>Interests:</strong> </div>
+            <button class="btn btn-primary btn-sm mt-1 connect-btn" data-userid="">Connect</button>
+        </div>
+    </template>
+
+    <template id="connection-item-template">
+        <li class="connection-item" data-connectionid="">
+            <div class="user-info">
+                <span class="user-name"></span> (<span class="user-role"></span>) -
+                <span class="status"></span>
+            </div>
+            <div class="actions">
+            </div>
+        </li>
+    </template>
+
+    <script src="js/api.js"></script>
+    <script src="js/profile.js"></script>
+    <script src="js/discovery.js"></script>
+    <script src="js/connections.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
