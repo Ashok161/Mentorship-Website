@@ -68,12 +68,13 @@
     <script src="js/main.js"></script>
     <script>
         console.log('All scripts loaded');
-        // Add immediate check
-        document.addEventListener('DOMContentLoaded', () => {
-            console.log('DOM fully loaded');
-            const form = document.getElementById('register-form');
-            console.log('Form element:', form);
-        });
+        // Add immediate setup
+        if (typeof setupRegisterForm === 'function') {
+            console.log('Found setupRegisterForm function');
+            setupRegisterForm();
+        } else {
+            console.error('setupRegisterForm function not found');
+        }
     </script>
 </body>
 </html>

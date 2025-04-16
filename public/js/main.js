@@ -11,10 +11,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Setup auth forms if on login/register pages
     if (currentPage === 'index.html' || currentPage === '') {
+        console.log('Setting up login form');
         setupLoginForm();
     }
-    if (currentPage === 'register.html') {
-        console.log('Setting up register form');
+    if (currentPage === 'register.html' || currentPage.includes('register')) {
+        console.log('About to setup register form');
         setupRegisterForm();
     }
 
@@ -120,3 +121,6 @@ function displayUserGreeting() {
 if (window.location.pathname.includes('dashboard.html')) {
     displayUserGreeting();
 }
+
+// Add this at the bottom of main.js to ensure the function is available globally
+window.setupRegisterForm = setupRegisterForm;
