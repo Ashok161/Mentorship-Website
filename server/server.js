@@ -15,13 +15,14 @@ connectDB();
 
 const app = express();
 
-// Enable CORS for Netlify frontend
+// Enable CORS for Netlify frontend and Postman testing
 const allowedOrigins = [
-  process.env.FRONTEND_URL || 'http://localhost:5001', // Netlify URL or localhost for testing
+  process.env.FRONTEND_URL || 'http://localhost:5001', // Netlify URL or localhost
 ];
 app.use(
   cors({
     origin: (origin, callback) => {
+      // Allow requests with no origin (e.g., Postman, curl) for testing
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
@@ -39,9 +40,6 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/connections', connectionRoutes);
-
-// Serve static files from the 'public' directory (optional, remove if frontend is on Netlify)
-app.use(express.static(path.join(__dirname, '../public')));
 
 // Health check endpoint for Render
 app.get('/health', (req, res) => {
