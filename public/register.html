@@ -20,7 +20,25 @@
     <main class="container">
         <div class="form-container">
             <h1>Register</h1>
-             <div id="error-message-register" class="error-message" style="display: none;"></div>
+            <div id="error-message-register" class="message" style="display: none;"></div>
+            <style>
+                .message {
+                    padding: 10px;
+                    margin: 10px 0;
+                    border-radius: 4px;
+                    display: none;
+                }
+                .error-message {
+                    background-color: #ffebee;
+                    color: #c62828;
+                    border: 1px solid #ef5350;
+                }
+                .success-message {
+                    background-color: #e8f5e9;
+                    color: #2e7d32;
+                    border: 1px solid #66bb6a;
+                }
+            </style>
             <form id="register-form" onsubmit="event.preventDefault(); console.log('Inline prevention');">
                 <div class="form-group">
                     <label for="name">Full Name</label>

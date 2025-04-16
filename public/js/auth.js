@@ -32,7 +32,9 @@ function setupLoginForm() {
 function setupRegisterForm() {
     console.log('Setting up register form function called');
     const registerForm = document.getElementById('register-form');
+    const errorMessageDiv = document.getElementById('error-message-register');
     console.log('Found register form:', registerForm);
+    console.log('Found error message div:', errorMessageDiv);
 
     if (registerForm) {
         console.log('Adding submit event listener');
@@ -41,14 +43,16 @@ function setupRegisterForm() {
             e.preventDefault();
             console.log('Default prevented');
             
+            clearMessage('error-message-register');
+            
             const name = document.getElementById('name').value;
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
             const role = document.getElementById('role').value;
             
-            console.log('Form data collected:', { name, email, role }); // Don't log passwords
-            
+            console.log('Form data collected:', { name, email, role });
+
             // Client-side validation
             if (!name || !email || !password || !role) {
                 showMessage('error', 'Please fill in all required fields.', 'error-message-register');
@@ -63,13 +67,8 @@ function setupRegisterForm() {
                 console.log('Attempting to register user...');
                 const data = await registerUser(name, email, password, role);
                 console.log('Registration API call successful');
-                showMessage('success', 'Registration successful! Please login.', 'error-message-register');
-                // Clear the form
+                showMessage('success', 'Registration successful! Redirecting to login...', 'error-message-register');
                 registerForm.reset();
-                // Don't store token or redirect, just show success message
-                setTimeout(() => {
-                    window.location.href = '/index.html'; // Redirect to login after 2 seconds
-                }, 2000);
             } catch (error) {
                 console.error('Registration failed:', error);
                 const message = error.data?.message || error.message || 'Registration failed. Please try again.';
@@ -78,5 +77,34 @@ function setupRegisterForm() {
         });
     } else {
         console.error('Register form not found in the DOM');
+    }
+}
+
+function showMessage(type, message, elementId) {
+    console.log('Showing message:', type, message);
+    const messageElement = document.getElementById(elementId);
+    if (messageElement) {
+        messageElement.textContent = message;
+        messageElement.style.display = 'block';
+        messageElement.className = `message ${type}-message`;
+        // Auto-hide success messages after 3 seconds
+        if (type === 'success') {
+            setTimeout(() => {
+                messageElement.style.display = 'none';
+                if (message.includes('Registration successful')) {
+                    window.location.href = '/index.html';
+                }
+            }, 3000);
+        }
+    } else {
+        console.error('Message element not found:', elementId);
+    }
+}
+
+function clearMessage(elementId) {
+    const messageElement = document.getElementById(elementId);
+    if (messageElement) {
+        messageElement.style.display = 'none';
+        messageElement.textContent = '';
     }
 }
