@@ -31,12 +31,10 @@ function setupLoginForm() {
 
 function setupRegisterForm() {
     const registerForm = document.getElementById('register-form');
-    console.log('Register form element:', registerForm);
-    
+    const errorMessageDiv = document.getElementById('error-message-register');
+
     if (registerForm) {
-        console.log('Adding submit listener to register form');
         registerForm.addEventListener('submit', async (e) => {
-            console.log('Form submitted');
             e.preventDefault();
             clearMessage('error-message-register');
             const name = document.getElementById('name').value;
@@ -46,36 +44,28 @@ function setupRegisterForm() {
             const role = document.getElementById('role').value;
 
             // Client-side validation
-            if (!name || !email || !password || !role ) {
+            if (!name || !email || !password || !role) {
                 showMessage('error', 'Please fill in all required fields.', 'error-message-register');
                 return;
             }
-             if (password !== confirmPassword) {
+            if (password !== confirmPassword) {
                 showMessage('error', 'Passwords do not match.', 'error-message-register');
                 return;
             }
-             if (password.length < 6) {
-                showMessage('error', 'Password must be at least 6 characters long.', 'error-message-register');
-                return;
-            }
-             // Basic email format check (more robust on backend)
-             if (!email.includes('@')) {
-                showMessage('error', 'Please enter a valid email address.', 'error-message-register');
-                return;
-             }
-
 
             try {
                 const data = await registerUser(name, email, password, role);
-                 localStorage.setItem('mentorship_token', data.token);
-                 localStorage.setItem('mentorship_user', JSON.stringify({ _id: data._id, name: data.name, email: data.email, role: data.role }));
-                window.location.href = '/dashboard.html'; // Redirect to dashboard after registration
+                showMessage('success', 'Registration successful! Please login.', 'error-message-register');
+                // Clear the form
+                registerForm.reset();
+                // Don't store token or redirect, just show success message
+                setTimeout(() => {
+                    window.location.href = '/index.html'; // Redirect to login after 2 seconds
+                }, 2000);
             } catch (error) {
                 const message = error.data?.message || error.message || 'Registration failed. Please try again.';
                 showMessage('error', message, 'error-message-register');
             }
         });
-    } else {
-        console.error('Register form not found!');
     }
 }

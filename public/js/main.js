@@ -1,24 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
     console.log('main.js loaded');
-    const token = localStorage.getItem('mentorship_token');
     const currentPage = window.location.pathname.split('/').pop();
-
     console.log('Current page:', currentPage);
 
-    // Modified redirect logic
-    if (token && (currentPage === 'index.html' || currentPage === 'register.html' || currentPage === '')) {
-        window.location.href = '/dashboard.html'; // User logged in, go to dashboard
-    } else if (currentPage === 'dashboard.html') {
-        // If not logged in, redirect from dashboard to login
+    // Only redirect from dashboard if not logged in
+    const token = localStorage.getItem('mentorship_token');
+    if (!token && currentPage === 'dashboard.html') {
         window.location.href = '/index.html';
-    }
-
-    // Setup common elements if on dashboard
-    if (currentPage === 'dashboard.html' && token) {
-        setupDashboardNavigation();
-        loadUserProfile(); // Initial load of profile section
-        // Load other sections as needed or based on nav clicks
-        displaySection('profile-section'); // Show profile by default
     }
 
     // Setup auth forms if on login/register pages
@@ -30,6 +18,12 @@ document.addEventListener('DOMContentLoaded', () => {
         setupRegisterForm();
     }
 
+    // Setup dashboard if on dashboard page
+    if (currentPage === 'dashboard.html' && token) {
+        setupDashboardNavigation();
+        loadUserProfile();
+        displaySection('profile-section');
+    }
 });
 
 function setupDashboardNavigation() {
