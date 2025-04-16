@@ -69,7 +69,10 @@ async function request(endpoint, method = 'GET', data = null, requireAuth = true
 
 // Auth API calls
 const loginUser = (email, password) => request('/auth/login', 'POST', { email, password }, false);
-const registerUser = (name, email, password, role) => request('/auth/register', 'POST', { name, email, password, role }, false);
+const registerUser = (name, email, password, role) => {
+    console.log('registerUser function called with:', { name, email, role }); // Don't log password
+    return request('/auth/register', 'POST', { name, email, password, role }, false);
+};
 
 // User API calls
 const getUserProfile = () => request('/users/me', 'GET');

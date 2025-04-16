@@ -30,19 +30,25 @@ function setupLoginForm() {
 }
 
 function setupRegisterForm() {
+    console.log('Setting up register form function called');
     const registerForm = document.getElementById('register-form');
-    const errorMessageDiv = document.getElementById('error-message-register');
+    console.log('Found register form:', registerForm);
 
     if (registerForm) {
+        console.log('Adding submit event listener');
         registerForm.addEventListener('submit', async (e) => {
+            console.log('Form submit event triggered');
             e.preventDefault();
-            clearMessage('error-message-register');
+            console.log('Default prevented');
+            
             const name = document.getElementById('name').value;
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
             const role = document.getElementById('role').value;
-
+            
+            console.log('Form data collected:', { name, email, role }); // Don't log passwords
+            
             // Client-side validation
             if (!name || !email || !password || !role) {
                 showMessage('error', 'Please fill in all required fields.', 'error-message-register');
@@ -54,7 +60,9 @@ function setupRegisterForm() {
             }
 
             try {
+                console.log('Attempting to register user...');
                 const data = await registerUser(name, email, password, role);
+                console.log('Registration API call successful');
                 showMessage('success', 'Registration successful! Please login.', 'error-message-register');
                 // Clear the form
                 registerForm.reset();
@@ -63,9 +71,12 @@ function setupRegisterForm() {
                     window.location.href = '/index.html'; // Redirect to login after 2 seconds
                 }, 2000);
             } catch (error) {
+                console.error('Registration failed:', error);
                 const message = error.data?.message || error.message || 'Registration failed. Please try again.';
                 showMessage('error', message, 'error-message-register');
             }
         });
+    } else {
+        console.error('Register form not found in the DOM');
     }
 }

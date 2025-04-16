@@ -21,7 +21,7 @@
         <div class="form-container">
             <h1>Register</h1>
              <div id="error-message-register" class="error-message" style="display: none;"></div>
-            <form id="register-form" onsubmit="console.log('Form submitted via inline handler');">
+            <form id="register-form" onsubmit="event.preventDefault(); console.log('Inline prevention');">
                 <div class="form-group">
                     <label for="name">Full Name</label>
                     <input type="text" id="name" name="name" required>
@@ -61,10 +61,19 @@
     </footer>
 
     <script>
-        console.log('Page loaded'); // Debug line
+        console.log('Document starting to load scripts');
     </script>
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/main.js"></script>
+    <script>
+        console.log('All scripts loaded');
+        // Add immediate check
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM fully loaded');
+            const form = document.getElementById('register-form');
+            console.log('Form element:', form);
+        });
+    </script>
 </body>
 </html>
