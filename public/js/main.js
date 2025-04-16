@@ -1,6 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('main.js loaded');
     const token = localStorage.getItem('mentorship_token');
     const currentPage = window.location.pathname.split('/').pop();
+
+    console.log('Current page:', currentPage);
 
     // Redirect logic
     if (token && (currentPage === 'index.html' || currentPage === 'register.html' || currentPage === '')) {
@@ -22,6 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setupLoginForm();
      }
      if (currentPage === 'register.html') {
+         console.log('Setting up register form');
          setupRegisterForm();
      }
 
