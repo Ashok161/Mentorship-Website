@@ -1,7 +1,32 @@
+function setupNavigation() {
+    // Handle logo clicks
+    const logoLinks = document.querySelectorAll('.logo');
+    logoLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const token = localStorage.getItem('mentorship_token');
+            if (token) {
+                window.location.href = '/dashboard.html#profile';
+                // If we're already on dashboard, show profile section
+                if (window.location.pathname.includes('dashboard')) {
+                    displaySection('profile-section');
+                    document.querySelectorAll('#main-nav a').forEach(a => a.classList.remove('active'));
+                    document.getElementById('nav-profile').classList.add('active');
+                }
+            } else {
+                window.location.href = '/index.html';
+            }
+        });
+    });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     console.log('main.js loaded');
     const currentPage = window.location.pathname.split('/').pop();
     console.log('Current page:', currentPage);
+
+    // Setup navigation for all pages
+    setupNavigation();
 
     // Only redirect from dashboard if not logged in
     const token = localStorage.getItem('mentorship_token');
