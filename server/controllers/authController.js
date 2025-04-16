@@ -10,55 +10,52 @@ const generateToken = (id) => {
 exports.registerUser = async (req, res) => {
   const { name, email, password, role } = req.body;
 
-  // --- Input Validation ---
+  // Input Validation
   if (!name || !email || !password || !role) {
     return res.status(400).json({ message: 'Please provide all required fields (name, email, password, role)' });
   }
   if (!validator.isEmail(email)) {
-     return res.status(400).json({ message: 'Please provide a valid email address' });
+    return res.status(400).json({ message: 'Please provide a valid email address' });
   }
   if (!['mentor', 'mentee'].includes(role)) {
-     return res.status(400).json({ message: 'Invalid role specified. Must be "mentor" or "mentee".' });
+    return res.status(400).json({ message: 'Invalid role specified. Must be "mentor" or "mentee".' });
   }
-  // Password length check (can also rely on Mongoose schema minlength)
   if (password.length < 6) {
-     return res.status(400).json({ message: 'Password must be at least 6 characters long' });
+    return res.status(400).json({ message: 'Password must be at least 6 characters long' });
   }
-  // --- End Input Validation ---
 
   try {
-    // --- Duplicate Prevention (Email) ---
+    // Check for existing user
     const userExists = await User.findOne({ email: email.toLowerCase() });
     if (userExists) {
-      // Use status 409 (Conflict) or 400 (Bad Request)
       return res.status(409).json({ message: 'User already exists with this email address' });
     }
-    // --- End Duplicate Prevention ---
 
-    // Mongoose model handles hashing via pre-save hook
-    const user = await User.create({ name, email: email.toLowerCase(), password, role });
+    // Create new user
+    const user = await User.create({
+      name,
+      email: email.toLowerCase(),
+      password,
+      role
+    });
 
-    if (user) {
-      res.status(201).json({
+    // Send success response
+    return res.status(201).json({
+      message: 'Registration successful',
+      user: {
         _id: user._id,
         name: user.name,
         email: user.email,
-        role: user.role,
-        token: generateToken(user._id),
-      });
-    } else {
-      // Should not happen if validation passes, but as a fallback
-      res.status(400).json({ message: 'Invalid user data provided' });
-    }
+        role: user.role
+      }
+    });
   } catch (error) {
     console.error('Registration Error:', error);
-    // Handle Mongoose validation errors specifically if needed
     if (error.name === 'ValidationError') {
-        // Collect specific validation messages
-        const messages = Object.values(error.errors).map(val => val.message);
-        return res.status(400).json({ message: messages.join('. ') });
+      const messages = Object.values(error.errors).map(val => val.message);
+      return res.status(400).json({ message: messages.join('. ') });
     }
-    res.status(500).json({ message: 'Server Error during registration' });
+    return res.status(500).json({ message: 'Server Error during registration' });
   }
 };
 

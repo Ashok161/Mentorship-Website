@@ -11,6 +11,9 @@
             margin: 15px 0;
             border-radius: 4px;
             text-align: center;
+            font-weight: 500;
+            opacity: 1;
+            transition: opacity 0.3s ease-in-out;
         }
         .success-message {
             background-color: #e8f5e9;
@@ -24,6 +27,12 @@
         }
         #error-message-register {
             margin-bottom: 20px;
+            position: relative;
+            z-index: 1000;
+        }
+        .btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
         }
     </style>
 </head>

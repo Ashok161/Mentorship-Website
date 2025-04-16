@@ -31,75 +31,94 @@ function setupLoginForm() {
 
 function setupRegisterForm() {
     console.log('Setting up register form function called');
-    const registerForm = document.getElementById('register-form');
-    const errorMessageDiv = document.getElementById('error-message-register');
+     const registerForm = document.getElementById('register-form');
+    const messageDiv = document.getElementById('error-message-register');
 
-    if (registerForm) {
-        registerForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            clearMessage('error-message-register');
-            
-            const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
-            const role = document.getElementById('role').value;
-            
-            // Client-side validation
-            if (!name || !email || !password || !role) {
-                showMessage('error', 'Please fill in all required fields.', 'error-message-register');
-                return;
-            }
-            if (password !== confirmPassword) {
-                showMessage('error', 'Passwords do not match.', 'error-message-register');
-                return;
-            }
-
-            try {
-                const response = await fetch(`${API_BASE_URL}/auth/register`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ name, email, password, role })
-                });
-
-                const data = await response.json();
-
-                if (response.ok) {
-                    // Registration successful
-                    showMessage('success', 'Registration successful! Redirecting to login...', 'error-message-register');
-                    registerForm.reset();
-                    setTimeout(() => {
-                        window.location.href = '/index.html';
-                    }, 2000);
-                } else {
-                    // Registration failed with a known error
-                    showMessage('error', data.message || 'Registration failed. Please try again.', 'error-message-register');
-                }
-            } catch (error) {
-                console.error('Registration error:', error);
-                showMessage('error', 'An unexpected error occurred. Please try again.', 'error-message-register');
-            }
-        });
+    if (!registerForm || !messageDiv) {
+        console.error('Required elements not found');
+        return;
     }
+
+         registerForm.addEventListener('submit', async (e) => {
+             e.preventDefault();
+             clearMessage('error-message-register');
+
+        const name = document.getElementById('name').value.trim();
+        const email = document.getElementById('email').value.trim();
+             const password = document.getElementById('password').value;
+             const confirmPassword = document.getElementById('confirmPassword').value;
+             const role = document.getElementById('role').value;
+
+        // Validation
+        if (!name || !email || !password || !role) {
+                 showMessage('error', 'Please fill in all required fields.', 'error-message-register');
+                 return;
+             }
+              if (password !== confirmPassword) {
+                 showMessage('error', 'Passwords do not match.', 'error-message-register');
+                 return;
+             }
+
+        try {
+            // Disable form while submitting
+            const submitButton = registerForm.querySelector('button[type="submit"]');
+            if (submitButton) submitButton.disabled = true;
+
+            const response = await fetch(`${API_BASE_URL}/auth/register`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name, email, password, role })
+            });
+
+            const data = await response.json();
+
+            if (response.status === 201) {
+                // Successful registration
+                showMessage('success', 'Registration successful! Redirecting to login page...', 'error-message-register');
+                registerForm.reset();
+            } else {
+                // Known error from server
+                showMessage('error', data.message || 'Registration failed. Please try again.', 'error-message-register');
+            }
+             } catch (error) {
+            console.error('Registration error:', error);
+            showMessage('error', 'An unexpected error occurred. Please try again.', 'error-message-register');
+        } finally {
+            // Re-enable form
+            const submitButton = registerForm.querySelector('button[type="submit"]');
+            if (submitButton) submitButton.disabled = false;
+        }
+    });
 }
 
 function showMessage(type, message, elementId) {
-    console.log('Showing message:', type, message);
+    console.log('Showing message:', { type, message, elementId });
     const messageElement = document.getElementById(elementId);
-    if (messageElement) {
-        messageElement.textContent = message;
-        messageElement.className = `message ${type}-message`;
-        messageElement.style.display = 'block';
-        
-        // For success messages, auto-hide after delay
-        if (type === 'success') {
-            setTimeout(() => {
-                messageElement.style.display = 'none';
-            }, 2000);
-        }
+    if (!messageElement) {
+        console.error('Message element not found:', elementId);
+        return;
     }
+
+    // Clear any existing timeouts
+    if (window.messageTimeout) {
+        clearTimeout(window.messageTimeout);
+    }
+
+    // Update message
+    messageElement.textContent = message;
+    messageElement.className = `message ${type}-message`;
+    messageElement.style.display = 'block';
+
+    // Set timeout to hide message after 5 seconds
+    window.messageTimeout = setTimeout(() => {
+        messageElement.style.display = 'none';
+        // Only redirect if it was a success message
+        if (type === 'success') {
+            window.location.href = '/index.html';
+        }
+    }, 5000);
 }
 
 function clearMessage(elementId) {
@@ -107,5 +126,5 @@ function clearMessage(elementId) {
     if (messageElement) {
         messageElement.style.display = 'none';
         messageElement.textContent = '';
-    }
+     }
 }
