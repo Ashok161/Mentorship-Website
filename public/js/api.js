@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:5001/api'; // Ensure this is just the plain string
+const API_BASE_URL = 'https://mentorship-backend-g3mo.onrender.com/api'; // Ensure this is just the plain string
 
 async function request(endpoint, method = 'GET', data = null, requireAuth = true) {
     // Ensure you are using backticks (`) for the template literal, not single quotes (')
