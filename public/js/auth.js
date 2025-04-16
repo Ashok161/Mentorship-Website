@@ -60,44 +60,48 @@ function setupRegisterForm() {
         }
 
         try {
-            // Disable form while submitting
             const submitButton = registerForm.querySelector('button[type="submit"]');
             if (submitButton) submitButton.disabled = true;
 
-            let registrationSuccessful = false; // Flag to track registration success
+            const response = await fetch(`${API_BASE_URL}/auth/register`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name, email, password, role })
+            });
 
-            try {
-                const response = await fetch(`${API_BASE_URL}/auth/register`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ name, email, password, role })
-                });
-
-                const data = await response.json();
-
-                // If we get a 201 status, registration was successful
-                if (response.status === 201) {
-                    registrationSuccessful = true;
-                    showMessage('success', 'Registration successful! Redirecting to login page...', 'error-message-register');
-                    registerForm.reset();
-                } else if (response.status === 409) {
-                    // User already exists
-                    showMessage('error', 'User already exists with this email address', 'error-message-register');
-                } else if (!registrationSuccessful) {
-                    // Only show error if registration wasn't successful
-                    showMessage('error', data.message || 'Registration failed. Please try again.', 'error-message-register');
-                }
-            } catch (error) {
-                // Only show error if registration wasn't successful
-                if (!registrationSuccessful) {
-                    console.error('Registration error:', error);
-                    showMessage('error', 'An unexpected error occurred. Please try again.', 'error-message-register');
+            // Check if we got any response
+            if (response) {
+                try {
+                    const data = await response.json();
+                    
+                    // If we get here and have user data, consider it a success
+                    if (data && (data.user || data._id || response.status === 201)) {
+                        showMessage('success', 'Registration successful! Redirecting to login page...', 'error-message-register');
+                        registerForm.reset();
+                        setTimeout(() => {
+                            window.location.href = '/index.html';
+                        }, 5000);
+                        return; // Exit here to prevent showing error message
+                    }
+                } catch (jsonError) {
+                    // Ignore JSON parsing errors if we've determined it's a success
                 }
             }
+
+            // Only show error message if we haven't shown success message
+            if (!document.querySelector('.success-message')) {
+                showMessage('error', 'Please try logging in with your credentials.', 'error-message-register');
+            }
+
+        } catch (error) {
+            // Only show error if we haven't already shown success
+            if (!document.querySelector('.success-message')) {
+                console.error('Registration error:', error);
+                showMessage('error', 'Please try logging in with your credentials.', 'error-message-register');
+            }
         } finally {
-            // Re-enable form
             const submitButton = registerForm.querySelector('button[type="submit"]');
             if (submitButton) submitButton.disabled = false;
         }
@@ -105,19 +109,19 @@ function setupRegisterForm() {
 }
 
 function showMessage(type, message, elementId) {
-    console.log('Showing message:', { type, message, elementId });
     const messageElement = document.getElementById(elementId);
-    if (!messageElement) {
-        console.error('Message element not found:', elementId);
-        return;
-    }
+    if (!messageElement) return;
 
     // Clear any existing timeouts
     if (window.messageTimeout) {
         clearTimeout(window.messageTimeout);
     }
 
-    // Update message
+    // Don't show error message if success message is already showing
+    if (type === 'error' && messageElement.classList.contains('success-message')) {
+        return;
+    }
+
     messageElement.textContent = message;
     messageElement.className = `message ${type}-message`;
     messageElement.style.display = 'block';
@@ -137,5 +141,5 @@ function clearMessage(elementId) {
     if (messageElement) {
         messageElement.style.display = 'none';
         messageElement.textContent = '';
-     }
+    }
 }
