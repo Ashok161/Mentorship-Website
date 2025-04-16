@@ -111,6 +111,3 @@ The backend is configured to accept requests from:
 4. Set start command: `npm start`
 5. Add environment variables in Render dashboard
 
-## License
-
-This project is licensed under the MIT License. 
