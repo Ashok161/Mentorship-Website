@@ -33,16 +33,10 @@ function setupRegisterForm() {
     console.log('Setting up register form function called');
     const registerForm = document.getElementById('register-form');
     const errorMessageDiv = document.getElementById('error-message-register');
-    console.log('Found register form:', registerForm);
-    console.log('Found error message div:', errorMessageDiv);
 
     if (registerForm) {
-        console.log('Adding submit event listener');
         registerForm.addEventListener('submit', async (e) => {
-            console.log('Form submit event triggered');
             e.preventDefault();
-            console.log('Default prevented');
-            
             clearMessage('error-message-register');
             
             const name = document.getElementById('name').value;
@@ -51,8 +45,6 @@ function setupRegisterForm() {
             const confirmPassword = document.getElementById('confirmPassword').value;
             const role = document.getElementById('role').value;
             
-            console.log('Form data collected:', { name, email, role });
-
             // Client-side validation
             if (!name || !email || !password || !role) {
                 showMessage('error', 'Please fill in all required fields.', 'error-message-register');
@@ -64,19 +56,32 @@ function setupRegisterForm() {
             }
 
             try {
-                console.log('Attempting to register user...');
-                const data = await registerUser(name, email, password, role);
-                console.log('Registration API call successful');
-                showMessage('success', 'Registration successful! Redirecting to login...', 'error-message-register');
-                registerForm.reset();
+                const response = await fetch(`${API_BASE_URL}/auth/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name, email, password, role })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Registration successful
+                    showMessage('success', 'Registration successful! Redirecting to login...', 'error-message-register');
+                    registerForm.reset();
+                    setTimeout(() => {
+                        window.location.href = '/index.html';
+                    }, 2000);
+                } else {
+                    // Registration failed with a known error
+                    showMessage('error', data.message || 'Registration failed. Please try again.', 'error-message-register');
+                }
             } catch (error) {
-                console.error('Registration failed:', error);
-                const message = error.data?.message || error.message || 'Registration failed. Please try again.';
-                showMessage('error', message, 'error-message-register');
+                console.error('Registration error:', error);
+                showMessage('error', 'An unexpected error occurred. Please try again.', 'error-message-register');
             }
         });
-    } else {
-        console.error('Register form not found in the DOM');
     }
 }
 
@@ -85,19 +90,15 @@ function showMessage(type, message, elementId) {
     const messageElement = document.getElementById(elementId);
     if (messageElement) {
         messageElement.textContent = message;
-        messageElement.style.display = 'block';
         messageElement.className = `message ${type}-message`;
-        // Auto-hide success messages after 3 seconds
+        messageElement.style.display = 'block';
+        
+        // For success messages, auto-hide after delay
         if (type === 'success') {
             setTimeout(() => {
                 messageElement.style.display = 'none';
-                if (message.includes('Registration successful')) {
-                    window.location.href = '/index.html';
-                }
-            }, 3000);
+            }, 2000);
         }
-    } else {
-        console.error('Message element not found:', elementId);
     }
 }
 

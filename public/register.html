@@ -5,6 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register - Mentorship Platform</title>
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        .message {
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+            text-align: center;
+        }
+        .success-message {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #66bb6a;
+        }
+        .error-message {
+            background-color: #ffebee;
+            color: #c62828;
+            border: 1px solid #ef5350;
+        }
+        #error-message-register {
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -21,24 +42,6 @@
         <div class="form-container">
             <h1>Register</h1>
             <div id="error-message-register" class="message" style="display: none;"></div>
-            <style>
-                .message {
-                    padding: 10px;
-                    margin: 10px 0;
-                    border-radius: 4px;
-                    display: none;
-                }
-                .error-message {
-                    background-color: #ffebee;
-                    color: #c62828;
-                    border: 1px solid #ef5350;
-                }
-                .success-message {
-                    background-color: #e8f5e9;
-                    color: #2e7d32;
-                    border: 1px solid #66bb6a;
-                }
-            </style>
             <form id="register-form" onsubmit="event.preventDefault(); console.log('Inline prevention');">
                 <div class="form-group">
                     <label for="name">Full Name</label>
