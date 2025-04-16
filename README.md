@@ -94,7 +94,7 @@ JWT_SECRET=your_jwt_secret_key
 
 ### CORS Configuration
 The backend is configured to accept requests from:
-- https://ashok-mentorhsip-platform.netlify.app (Access the actual website here too)
+- https://ashok-mentorhsip-platform.netlify.app (Access the  website here too)
 - http://localhost:5001
 
 ## Deployment
