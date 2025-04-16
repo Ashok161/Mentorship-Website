@@ -5,11 +5,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     console.log('Current page:', currentPage);
 
-    // Redirect logic
+    // Modified redirect logic
     if (token && (currentPage === 'index.html' || currentPage === 'register.html' || currentPage === '')) {
         window.location.href = '/dashboard.html'; // User logged in, go to dashboard
-    } else if (!token && currentPage === 'dashboard.html') {
-        window.location.href = '/index.html'; // User not logged in, go to login
+    } else if (currentPage === 'dashboard.html') {
+        // If not logged in, redirect from dashboard to login
+        window.location.href = '/index.html';
     }
 
     // Setup common elements if on dashboard
@@ -20,14 +21,14 @@ document.addEventListener('DOMContentLoaded', () => {
         displaySection('profile-section'); // Show profile by default
     }
 
-     // Setup auth forms if on login/register pages
-     if (currentPage === 'index.html' || currentPage === '') {
+    // Setup auth forms if on login/register pages
+    if (currentPage === 'index.html' || currentPage === '') {
         setupLoginForm();
-     }
-     if (currentPage === 'register.html') {
-         console.log('Setting up register form');
-         setupRegisterForm();
-     }
+    }
+    if (currentPage === 'register.html') {
+        console.log('Setting up register form');
+        setupRegisterForm();
+    }
 
 });
 
