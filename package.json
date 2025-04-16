@@ -6,7 +6,7 @@
     "start": "node server/server.js",
     "server": "nodemon server/server.js",
     "build": "webpack --mode production",
-    "deploy": "netlify deploy"
+    "deploy": "vercel --prod"
   },
   "keywords": [],
   "author": "",
