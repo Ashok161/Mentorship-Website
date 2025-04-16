@@ -7,40 +7,54 @@ const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const connectionRoutes = require('./routes/connectionRoutes');
 
+// Load environment variables
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
+// Connect to MongoDB
 connectDB();
 
 const app = express();
 
-app.use(cors()); // Enable CORS for all origins (restrict in production)
-app.use(express.json()); // Middleware to parse JSON bodies
+// Enable CORS for Netlify frontend
+const allowedOrigins = [
+  process.env.FRONTEND_URL || 'http://localhost:5001', // Netlify URL or localhost for testing
+];
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true, // If using cookies for auth
+  })
+);
+
+// Parse JSON bodies
+app.use(express.json());
 
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/connections', connectionRoutes);
 
-// Serve static files from the 'public' directory
+// Serve static files from the 'public' directory (optional, remove if frontend is on Netlify)
 app.use(express.static(path.join(__dirname, '../public')));
 
-// Fallback to serve index.html for client-side routing (if using SPA approach)
-// For multi-page, ensure direct links work or handle 404 appropriately.
-// This example assumes multi-page, direct access to HTML files.
-// If you adopt a single index.html loading content dynamically, uncomment the next lines:
-/*
-app.get('*', (req, res) => {
-   res.sendFile(path.resolve(__dirname, '../public', 'index.html'));
+// Health check endpoint for Render
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'OK' });
 });
-*/
 
-// Basic Error Handling Middleware (optional, can be more sophisticated)
+// Basic Error Handling Middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).send('Something broke!');
+  res.status(500).json({ message: 'Something broke!' });
 });
 
-
+// Use Render's dynamic port
 const PORT = process.env.PORT || 5001;
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
