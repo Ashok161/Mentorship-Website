@@ -82,26 +82,7 @@ Mentorship-Platform/
 ├── .env                  # Environment variables
 ├── package.json          # Project dependencies
 └── README.md            # Project documentation
-```
-
-## API Endpoints
-
-### Authentication
-- `POST /api/auth/register` - Register new user
-- `POST /api/auth/login` - User login
-
-### Users
-- `GET /api/users/me` - Get current user profile
-- `PUT /api/users/me` - Update user profile
-- `DELETE /api/users/me` - Delete user profile
-- `GET /api/users` - Discover users (with filters)
-
-### Connections
-- `POST /api/connections` - Send connection request
-- `GET /api/connections` - Get user connections
-- `PUT /api/connections/:id` - Update connection status
-- `DELETE /api/connections/:id` - Delete connection
-
+``
 ## Configuration
 
 ### Environment Variables
