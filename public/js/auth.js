@@ -16,14 +16,30 @@ function setupLoginForm() {
             }
 
             try {
+                const submitButton = loginForm.querySelector('button[type="submit"]');
+                if (submitButton) submitButton.disabled = true;
+
+                // Show logging in message immediately
+                showMessage('info', 'Logging in...', 'error-message-login');
+
                 const data = await loginUser(email, password);
                 localStorage.setItem('mentorship_token', data.token);
                 // Store basic user info for greeting/role checks if needed
                 localStorage.setItem('mentorship_user', JSON.stringify({ _id: data._id, name: data.name, email: data.email, role: data.role }));
-                window.location.href = '/dashboard.html';
+                
+                // Show success message before redirecting
+                showMessage('success', 'Login successful! Redirecting to dashboard...', 'error-message-login');
+                
+                // Redirect after a short delay
+                setTimeout(() => {
+                    window.location.href = '/dashboard.html';
+                }, 2000);
             } catch (error) {
                 const message = error.data?.message || error.message || 'Login failed. Please try again.';
                 showMessage('error', message, 'error-message-login');
+            } finally {
+                const submitButton = loginForm.querySelector('button[type="submit"]');
+                if (submitButton) submitButton.disabled = false;
             }
         });
     }
@@ -126,14 +142,13 @@ function showMessage(type, message, elementId) {
     messageElement.className = `message ${type}-message`;
     messageElement.style.display = 'block';
 
-    // Set timeout to hide message after 5 seconds
-    window.messageTimeout = setTimeout(() => {
-        messageElement.style.display = 'none';
-        // Only redirect if it was a success message
-        if (type === 'success') {
+    // Set timeout to hide message after 5 seconds, but only for success messages
+    if (type === 'success') {
+        window.messageTimeout = setTimeout(() => {
+            messageElement.style.display = 'none';
             window.location.href = '/index.html';
-        }
-    }, 5000);
+        }, 5000);
+    }
 }
 
 function clearMessage(elementId) {

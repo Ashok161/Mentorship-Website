@@ -214,6 +214,16 @@ footer {
     font-size: 0.9rem;
     text-align: center;
 }
+.info-message {
+    color: var(--primary-color);
+    background-color: rgba(52, 152, 219, 0.1);
+    border: 1px solid var(--primary-color);
+    padding: var(--spacing-unit);
+    margin-bottom: var(--spacing-unit);
+    border-radius: 4px;
+    font-size: 0.9rem;
+    text-align: center;
+}
 
 /* Dashboard Sections */
 .dashboard-section {
