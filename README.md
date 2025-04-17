@@ -2,6 +2,8 @@
 
 A web-based mentorship platform that connects mentors and mentees, allowing users to create profiles, discover potential connections, and manage mentorship relationships.
 
+- NOTE - (Try login/signup for first time and wait for 50 seconds until the backend on render get's activated and try second time again to register/login.)
+
 ## Live Demo
 
 - Frontend: [https://ashok-mentorhsip-platform.netlify.app](https://ashok-mentorhsip-platform.netlify.app)
